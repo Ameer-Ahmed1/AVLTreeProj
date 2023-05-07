@@ -218,6 +218,9 @@ class AVLTree(object):
 	"""
 	def insert(self, key, val):
 		return -1
+	
+	def getBF(self, node):
+		return node.left.get_height() - node.right.get_height()
 
 
 	"""deletes node from the dictionary
