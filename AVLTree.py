@@ -166,7 +166,7 @@ class AVLNode(object):
 	@returns: False if self is a virtual node, True otherwise.
 	"""
 	def is_real_node(self):
-		return self.key != None
+		return not (self.right.key == None and self.left.key == None)
 
 
 
@@ -194,8 +194,17 @@ class AVLTree(object):
 	@returns: node corresponding to key.
 	"""
 	def search(self, key):
-		return None
-
+		# a recursive function that searches for the key according to the current node
+		def search_rec(node, key):
+			if node.key == key:
+				return node
+			elif node.key > key:
+				return search_rec(node.getleft(),key)
+			else:
+				return search_rec(node.get_right(), key)
+		
+		# return the result of calling the search_rec function with the root
+		return search_rec(self.root, key)
 
 	"""inserts val at position i in the dictionary
 
@@ -302,3 +311,5 @@ class AVLTree(object):
 	"""
 	def get_root(self):
 		return None
+
+	
