@@ -222,6 +222,42 @@ class AVLTree(object):
 	def getBF(self, node):
 		return node.left.get_height() - node.right.get_height()
 
+	def rotate_right(self, node):
+		# node is the node with a |bf| > 1
+		# the left child of node
+		left = node.get_left()
+		# the right child of the left child of node
+		leftR = left.get_right()
+
+		# change the left child and the right child
+		left.set_right(node)
+		node.set_left(leftR)
+
+		# change the heights
+		node.set_height(1 + max(node.get_left().get_height(), node.get_right().get_height()))
+		left.set_height(1 + max(left.get_left().get_height(), left.get_right().get_heigth()))
+
+		# return left in order to continue traversing the tree upward
+		return left
+
+	def rotate_left(self, node):
+		# get the right child of node
+		right = node.get_right()
+		# get the left chilf of right
+		rightL = right.get_left()
+
+
+		# change the left child and the right child
+		right.set_left(node)
+		node.set_left(rightL)
+
+		node.set_height(1 + max(node.get_left().get_height(), node.get_right().get_height()))
+		right.set_height(1 + max(right.get_left().get_height(), right.get_right().get_heigth()))
+
+		return right
+	
+	
+
 
 	"""deletes node from the dictionary
 
