@@ -267,7 +267,36 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def delete(self, node):
-		return -1
+		# the code is not finished
+		if (self.root == None):
+			return 0
+		if (node.get_key() < self.root.get_key()):
+			return -1
+		
+
+	# normal bst deletion
+	def deleteBst(self, node):
+		
+	# return the successor of a given node
+	def successor(self, node):
+		if (node.get_right()):
+			node = node.get_right()
+			while(node.get_left()):
+				node = node.get_left()
+			return node
+		else:
+			while (node.get_parent.get_right() == node):
+				node = node.get_parent()
+			return node.get_parent()
+	
+	# return the predecessor of a given node
+	def predecessor(self, node):
+		
+
+
+	
+
+
 
 
 	"""returns an array representing dictionary 
