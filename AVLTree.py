@@ -276,6 +276,9 @@ class AVLTree(object):
 
 	# normal bst deletion
 	def deleteBst(self, node):
+		if (not node.get_left().is_real_node() and not node.get_right().is_real_node()):
+			
+
 		
 	# return the successor of a given node
 	def successor(self, node):
@@ -291,7 +294,7 @@ class AVLTree(object):
 	
 	# return the predecessor of a given node
 	def predecessor(self, node):
-		
+
 
 
 	
