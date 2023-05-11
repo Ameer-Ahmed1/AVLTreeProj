@@ -220,10 +220,11 @@ class AVLTree(object):
 		return -1
 	
 	def getBF(self, node):
-		return node.left.get_height() - node.right.get_height()
+		return node.get_left().get_height() - node.get_right().get_height()
 
 	def rotate_right(self, node):
 		# node is the node with a |bf| > 1
+
 		# the left child of node
 		left = node.get_left()
 		# the right child of the left child of node
@@ -267,11 +268,70 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def delete(self, node):
-		# the code is not finished
+		
 		if (self.root == None):
 			return 0
-		if (node.get_key() < self.root.get_key()):
-			return -1
+		
+		
+		parent = node.get_parent()
+		numRotations = 0 #the number of rotations to make the tree balanced
+
+		self.deleteBst(node) # delete the node as in a bst
+
+		# traverse up to make rotations while needed
+		while (parent != None):
+			parentHeight = parent.get_height()
+			bfParent = self.getBF(parent)
+			newParent = parent.get_parent()
+
+			if abs(bfParent) < 2:
+				if (parent.get_height() == parentHeight):
+					return 0
+				else:
+					parent = newParent
+			
+			elif abs(bfParent) == 2:
+				# L
+				if bfParent == 2:
+					bfLParent = self.getBF(parent.get_left())
+					# LL
+					if  bfLParent >= 0:
+						self.rotate_right(parent)
+					
+					# LR
+					if bfLParent < 0:
+						parent.set_left(self.rotate_left(parent.get_left()))
+						self.rotate_right(parent)
+
+					numRotations += 1	
+
+				# R
+				elif bfParent == -2:
+					bfRParent = self.getBF(parent.get_right())
+
+					# RR
+					if bfRParent <= 0 :
+						self.rotate_left(parent)
+
+					# RL
+					if bfRParent > 0:
+						parent.set_right(self.rotate_right(parent.get_right()))
+						self.rotate_left(parent)
+					
+
+					numRotations += 1 # upadte the rotations number
+				
+				parent = newParent # upadte the parent to its parent
+
+			return numRotations
+
+
+
+
+
+			
+
+
 		
 
 	# normal bst deletion
@@ -313,6 +373,9 @@ class AVLTree(object):
 			y.set_parent(node.get_parent())
 			y.set_right(node.get_right())
 			y.set_left(node.get_left())
+		
+		return parent
+	
 
 
 
