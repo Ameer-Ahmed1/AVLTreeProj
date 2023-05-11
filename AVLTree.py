@@ -276,8 +276,48 @@ class AVLTree(object):
 
 	# normal bst deletion
 	def deleteBst(self, node):
+		parent = node.get_parent()
+
+		# node is a leaf:
 		if (not node.get_left().is_real_node() and not node.get_right().is_real_node()):
+			if (node == parent.get_right()):
+				parent.set_right(None)
+			else:
+				parent.set_left(None)
+
+		# node has no right child:
+		elif(node.get_left() and not node.get_right()):
+			nextNode = node.get_left()
+			if(node == parent.get_right()):
+				parent.set_right(nextNode)
+			else:
+				parent.set_left(nextNode)
+
+		# node has no left child:
+		elif(node.get_right() and not node.get_left()):
+			nextNode = node.get_right()
+			if(node == parent.get_right()):
+				parent.set_right(nextNode)
+			else:
+				parent.set_left(nextNode)
+
+		# node has both children:
+		else:
+			y = self.successor(node)
+
+			# delete y from the tree
+			y.get_parent().set_left(y.get_right())
+
+			# replace node by y
+			node.set_parent(None)
+			y.set_parent(node.get_parent())
+			y.set_right(node.get_right())
+			y.set_left(node.get_left())
+
+
+
 			
+
 
 		
 	# return the successor of a given node
@@ -293,7 +333,7 @@ class AVLTree(object):
 			return node.get_parent()
 	
 	# return the predecessor of a given node
-	def predecessor(self, node):
+	# def predecessor(self, node):
 
 
 
