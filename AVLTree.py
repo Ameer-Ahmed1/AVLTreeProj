@@ -166,7 +166,7 @@ class AVLNode(object):
 	@returns: False if self is a virtual node, True otherwise.
 	"""
 	def is_real_node(self):
-		return not (self.right.key == None and self.left.key == None)
+		return self.key != None
 
 
 
@@ -217,7 +217,61 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def insert(self, key, val):
+		newNode = AVLNode(key, val)
+		y = None
+		x = self.get_root()
+		while x != None:
+			y = x
+			if key < x.get_key(self):
+				x = x.get_left(self)
+			else:
+				x = x.get_right(self)
+		newNode.set_parent(y)
+		old_height_y = y.get_height
+		if y == None: # tree was empty
+			self.root = newNode
+			return None
+		elif key < y.key:
+			y.set_left(newNode)
+		else:
+			y.set_right(newNode)	
+		## this code adds the node as in a BTS, now we need to find and fix	BF criminals	
+
+
+
 		return -1
+	def insert_rec(self, y,):
+		while y != None:
+			yBF = y.get_BF()
+			if math.fabs(yBF) < 2:
+				return None
+			elif math.fabs(yBF) > 2:
+				insert_rec(self, y.get_parent())
+			else:
+				insert_rotaions(self, y)
+
+
+	def insert_rotaions(self, y):
+		return None
+
+	def BST_insert(self, key, val):
+		newNode = AVLNode(key, val)
+		y = None
+		x = self.get_root()
+		while x != None:
+			y = x
+			if key < x.get_key(self):
+				x = x.get_left(self)
+			else:
+				x = x.get_right(self)
+		newNode.set_parent(y)
+		if y == None:
+			self.root = newNode
+		elif key < y.key:
+			y.set_left(newNode)
+		else:
+			y.set_right(newNode)	
+		return y
 	
 	def getBF(self, node):
 		return node.get_left().get_height() - node.get_right().get_height()
@@ -272,7 +326,6 @@ class AVLTree(object):
 		if (self.root == None):
 			return 0
 		
-		
 		parent = node.get_parent()
 		numRotations = 0 #the number of rotations to make the tree balanced
 
@@ -325,15 +378,6 @@ class AVLTree(object):
 
 			return numRotations
 
-
-
-
-
-			
-
-
-		
-
 	# normal bst deletion
 	def deleteBst(self, node):
 		parent = node.get_parent()
@@ -375,13 +419,6 @@ class AVLTree(object):
 			y.set_left(node.get_left())
 		
 		return parent
-	
-
-
-
-			
-
-
 		
 	# return the successor of a given node
 	def successor(self, node):
@@ -397,11 +434,6 @@ class AVLTree(object):
 	
 	# return the predecessor of a given node
 	# def predecessor(self, node):
-
-
-
-	
-
 
 
 
@@ -475,7 +507,18 @@ class AVLTree(object):
 	@returns: the item of rank i in self
 	"""
 	def select(self, i):
-		return None
+		x = self.root
+
+		while True:
+			r = x.get_left().get_size() + 1
+			if i == r:
+				return x
+			elif i < r:
+				x = self.get_left()
+			else:
+				i = i - r
+		
+		
 
 
 	"""returns the root of the tree representing the dictionary
