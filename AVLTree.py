@@ -217,61 +217,82 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def insert(self, key, val):
+
+		num = 0 # the number of rotations
+		foundCriminal = False
+
+		# insert bst
 		newNode = AVLNode(key, val)
-		y = None
-		x = self.get_root()
-		while x != None:
-			y = x
-			if key < x.get_key(self):
-				x = x.get_left(self)
+		parent = None
+		child = self.get_root()
+		while child != None:
+			parent = child
+			child.set_size(child.get_size() + 1) # change the size of the current node
+			if key < child.get_key(self):
+				child = child.get_left(self)
 			else:
-				x = x.get_right(self)
-		newNode.set_parent(y)
-		old_height_y = y.get_height
-		if y == None: # tree was empty
+				child = child.get_right(self)
+
+		newNode.set_parent(parent)
+
+		if parent == None: # tree was empty
 			self.root = newNode
 			return None
-		elif key < y.key:
-			y.set_left(newNode)
+		elif key < parent.key:
+			parent.set_left(newNode)
 		else:
-			y.set_right(newNode)	
-		## this code adds the node as in a BTS, now we need to find and fix	BF criminals	
+			parent.set_right(newNode)	
 
+		# update hight until a rotation and fix AVL Criminals
+		while (parent != None):
+			bfParent = self.getBF(parent)
+			oldHeight = parent.get_height()
+			parent.set_height(max(parent.get_left().get_height(), parent.get_right().get_height()))
 
+			grandParent = parent.get_parent()
 
-		return -1
-	def insert_rec(self, y,):
-		while y != None:
-			yBF = y.get_BF()
-			if math.fabs(yBF) < 2:
-				return None
-			elif math.fabs(yBF) > 2:
-				insert_rec(self, y.get_parent())
-			else:
-				insert_rotaions(self, y)
+			if (not foundCriminal):
+				if abs(bfParent) < 2:
+					if (parent.get_height() == oldHeight):
+						num = 0
+						foundCriminal = True
+					else:
+						parent = grandParent
 
+				elif abs(bfParent) == 2:
+					foundCriminal = True
+					# L
+					if bfParent == 2:
+						bfLParent = self.getBF(parent.get_left())
+						# LL
+						if  bfLParent == 1:
+							self.rotate_right(parent)
+							num = 1
 
-	def insert_rotaions(self, y):
-		return None
+						# LR
+						if bfLParent == -1:
+							parent.set_left(self.rotate_left(parent.get_left()))
+							self.rotate_right(parent)
+							num = 2
 
-	def BST_insert(self, key, val):
-		newNode = AVLNode(key, val)
-		y = None
-		x = self.get_root()
-		while x != None:
-			y = x
-			if key < x.get_key(self):
-				x = x.get_left(self)
-			else:
-				x = x.get_right(self)
-		newNode.set_parent(y)
-		if y == None:
-			self.root = newNode
-		elif key < y.key:
-			y.set_left(newNode)
-		else:
-			y.set_right(newNode)	
-		return y
+					# R
+					elif bfParent == -2:
+						bfRParent = self.getBF(parent.get_right())
+
+						# RR
+						if bfRParent == -1 :
+							self.rotate_left(parent)
+							num = 1
+
+						# RL
+						if bfRParent == 1:
+							parent.set_right(self.rotate_right(parent.get_right()))
+							self.rotate_left(parent)
+							num
+				
+				else:
+					parent = grandParent
+
 	
 	def getBF(self, node):
 		return node.get_left().get_height() - node.get_right().get_height()
@@ -311,9 +332,6 @@ class AVLTree(object):
 
 		return right
 	
-	
-
-
 	"""deletes node from the dictionary
 
 	@type node: AVLNode
@@ -376,7 +394,7 @@ class AVLTree(object):
 				
 				parent = newParent # upadte the parent to its parent
 
-			return numRotations
+		return numRotations
 
 	# normal bst deletion
 	def deleteBst(self, node):
