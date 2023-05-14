@@ -311,7 +311,9 @@ class AVLTree(object):
 
 		# change the heights
 		node.set_height(1 + max(node.get_left().get_height(), node.get_right().get_height()))
+		node.set_size(node.get_left().get_size() + node.get_right().get_size())
 		left.set_height(1 + max(left.get_left().get_height(), left.get_right().get_heigth()))
+		left.set_size(left.get_left().get_size() + left.get_right().get_size())
 
 		# return left in order to continue traversing the tree upward
 		return left
@@ -319,7 +321,7 @@ class AVLTree(object):
 	def rotate_left(self, node):
 		# get the right child of node
 		right = node.get_right()
-		# get the left chilf of right
+		# get the left child of right
 		rightL = right.get_left()
 
 
@@ -328,7 +330,9 @@ class AVLTree(object):
 		node.set_left(rightL)
 
 		node.set_height(1 + max(node.get_left().get_height(), node.get_right().get_height()))
+		node.set_size(node.get_left().get_size() + node.get_right().get_size())
 		right.set_height(1 + max(right.get_left().get_height(), right.get_right().get_heigth()))
+		right.set_size(right.get_left().get_size() + right.get_right().get_size())
 
 		return right
 	
@@ -339,27 +343,38 @@ class AVLTree(object):
 	@rtype: int
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
+
+
+# while(parent != None):
+# 			parent.set_size(y.get_size() - 1)
+# 			parent.set_height(max(parent.get_left().get_height(), parent.get_right().get_height()))
+# 			parent = parent.get_parent()
+
 	def delete(self, node):
 		
 		if (self.root == None):
 			return 0
 		
-		parent = node.get_parent()
 		numRotations = 0 #the number of rotations to make the tree balanced
 
-		self.deleteBst(node) # delete the node as in a bst
+		parent = self.deleteBst(node) # delete the node as in a bst
 
 		# traverse up to make rotations while needed
 		while (parent != None):
-			parentHeight = parent.get_height()
+			oldHeight = parent.get_height()
+			parent.set_size(parent.get_size() - 1)
+			parent.set_height(max(parent.get_left().get_height(), parent.get_right().get_height()))
 			bfParent = self.getBF(parent)
 			newParent = parent.get_parent()
 
+			terminate = False
+
+		if (not terminate):
 			if abs(bfParent) < 2:
-				if (parent.get_height() == parentHeight):
-					return 0
-				else:
+				if (parent.get_height() != oldHeight):
 					parent = newParent
+				else:
+					terminate = True
 			
 			elif abs(bfParent) == 2:
 				# L
@@ -390,9 +405,11 @@ class AVLTree(object):
 						self.rotate_left(parent)
 					
 
-					numRotations += 1 # upadte the rotations number
-				
-				parent = newParent # upadte the parent to its parent
+				numRotations += 1 # update the rotations number
+
+				parent = newParent
+		else:
+			parent = newParent # update the parent to its parent
 
 		return numRotations
 
@@ -427,26 +444,30 @@ class AVLTree(object):
 		else:
 			y = self.successor(node)
 
+			parent = y.get_parent()
 			# delete y from the tree
 			y.get_parent().set_left(y.get_right())
-
+			
 			# replace node by y
-			node.set_parent(None)
 			y.set_parent(node.get_parent())
 			y.set_right(node.get_right())
 			y.set_left(node.get_left())
 		
+		
+
 		return parent
 		
 	# return the successor of a given node
 	def successor(self, node):
 		if (node.get_right()):
+
 			node = node.get_right()
 			while(node.get_left()):
+				# node.set_size(node.get_size() - 1)
 				node = node.get_left()
 			return node
 		else:
-			while (node.get_parent.get_right() == node):
+			while (node.get_parent().get_right() == node):
 				node = node.get_parent()
 			return node.get_parent()
 	
