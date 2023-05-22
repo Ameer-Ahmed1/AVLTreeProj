@@ -1,0 +1,26 @@
+import math
+import random
+from AVLTree import AVLTree2, AVLNode
+
+def calcuRandRand2(i):
+		tree = buildTree(1500*math.pow(2,int(i)))
+		num1 = random.randint(1, 1500*math.pow(2,i) )
+		node = tree.search(num1)
+		print(tree.split(node))
+		
+		
+		return 
+
+
+def buildTree(i):
+		newTree= AVLTree2()
+		values = list(range(1, int(i+1)))
+		random.shuffle(values)
+		for value in values:
+			# if(newTree.get_root()==None):
+			# 	newNode= AVLNode(value, 10)
+			# 	newTree.set_root(newNode)
+			newTree.insert(value, value)
+		return newTree
+
+calcuRandRand2(1)

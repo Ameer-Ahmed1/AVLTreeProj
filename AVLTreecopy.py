@@ -7,7 +7,7 @@ import random
 
 """A class represnting a node in an AVL tree"""
 
-class AVLNode(object):
+class AVLNode2(object):
 	"""Constructor, you are allowed to add more fields. 
 	
 	@type key: int or None
@@ -31,8 +31,9 @@ class AVLNode(object):
 	@returns: the key of self, None if the node is virtual
 	"""
 	def get_key(self):
+		if(self.key != None):
 			return self.key
-		
+		return None
 
 
 	"""returns the value
@@ -41,8 +42,9 @@ class AVLNode(object):
 	@returns: the value of self, None if the node is virtual
 	"""
 	def get_value(self):
+		if(self.value):
 			return self.value
-		
+		return None
 
 
 	"""returns the left child
@@ -50,8 +52,9 @@ class AVLNode(object):
 	@returns: the left child of self, None if there is no left child (if self is virtual)
 	"""
 	def get_left(self):
-		return self.left
-
+		if (self.left):
+			return self.left
+		return None
 
 
 	"""returns the right child
@@ -60,8 +63,9 @@ class AVLNode(object):
 	@returns: the right child of self, None if there is no right child (if self is virtual)
 	"""
 	def get_right(self):
-		return self.right
-		
+		if(self.right):
+			return self.right
+		return None
 
 
 	"""returns the parent 
@@ -70,7 +74,9 @@ class AVLNode(object):
 	@returns: the parent of self, None if there is no parent
 	"""
 	def get_parent(self):
+		if self.parent:
 			return self.parent
+		return None
 
 
 	"""returns the height
@@ -239,7 +245,7 @@ class AVLTree(object):
 
 		parent = None
 		child = self.get_root()
-		while (child != None and child.is_real_node()):
+		while (child.is_real_node()):
 			parent = child
 			# print(str(child.get_key()) + " size added")
 			child.set_size(child.get_size() + 1) # change the size of the current node
@@ -614,7 +620,7 @@ class AVLTree(object):
 				left.get_root().set_parent(None)
 				parent.set_left(vrNode)
 				T1.join(left, parent.get_key(), parent.get_value())
-				T1.printTree(T1.get_root())
+				# T1.printTree(T1.get_root())
 				node = parent
 				parent.get_right().set_parent(None)
 				parent.set_right(vrNode)
@@ -631,8 +637,8 @@ class AVLTree(object):
 				parent.set_left(vrNode)
 			parent = parent.get_parent()
 
-		T1.printTree(T1.get_root())
-		T2.printTree(T2.get_root())
+		# T1.printTree(T1.get_root())
+		# T2.printTree(T2.get_root())
 		return [T1, T2]
 		
 
@@ -680,7 +686,7 @@ class AVLTree(object):
 		parent = None
 
 		if(A.get_root().get_key() < B.get_root().get_key()):
-			while(node.get_height() > A.get_root().get_height()):
+			while(node.get_height() > A.get_height()):
 				node = node.get_left()
 			parent = node.get_parent()
 			addedNode.set_parent(parent)
@@ -817,6 +823,7 @@ class AVLTree(object):
 		num = 0 # the number of rotations
 		foundCriminal = False
 
+		
 		# insert finger
 		newNode = AVLNode(key, val)
 		vrL = AVLNode(None,0)
@@ -971,11 +978,12 @@ class AVLTree(object):
 				left.set_root(parent.get_left())
 				left.get_root().set_parent(None)
 				parent.set_left(vrNode)
-				heightDiff = T1.join2(left, parent.get_key(), parent.get_value())
+				heightDiff = T1.join(left, parent.get_key(), parent.get_value())
 				sum = sum+ heightDiff
-				num = num +1
+				num = num+1
 				if heightDiff > max:
 					max = heightDiff
+				# T1.printTree(T1.get_root())
 				node = parent
 				parent.get_right().set_parent(None)
 				parent.set_right(vrNode)
@@ -986,11 +994,10 @@ class AVLTree(object):
 				right.set_root(parent.get_right())
 				right.get_root().set_parent(None)
 				parent.set_right(vrNode)
-				heightDiff = T2.join2(right, parent.get_right().get_key(), parent.get_value())
-				print(heightDiff)
+				heightDiff = T2.join(right, parent.get_right().get_key(), parent.get_value())
 				sum = sum + heightDiff
-				num += 1
-				if max > heightDiff:
+				num = num + 1
+				if heightDiff >max:
 					max = heightDiff
 				node = parent
 				parent.get_left().set_parent(None)
@@ -999,12 +1006,10 @@ class AVLTree(object):
 
 		# T1.printTree(T1.get_root())
 		# T2.printTree(T2.get_root())
-		return [sum,num,max]
+		return [sum, num, max]
 	
 		
-		
 	def join2(self, tree, key, value):
-		ret = 0
 		# root = self.get_root()
 		heightSelf = self.get_root().get_height()
 		heightTree = tree.get_root().get_height()
@@ -1025,36 +1030,33 @@ class AVLTree(object):
 		if heightSelf < heightTree:
 			A = self
 			B = tree
-			ret = heightTree - heightSelf +1
 		else:
 			A = tree
 			B = self
-			ret = heightSelf - heightTree +1
 
 		node = B.get_root()
 		parent = None
 
-		if(A.get_root().get_key() !=  None and B.get_root().get_key()!=None):
-			if(A.get_root().get_key() < B.get_root().get_key()):
-				while(node.get_height() > A.get_root().get_height()):
-					node = node.get_left()
-				parent = node.get_parent()
-				addedNode.set_parent(parent)
-				addedNode.set_left(A.get_root())
-				A.get_root().set_parent(addedNode)
-				addedNode.set_right(node)
-				node.set_parent(addedNode)
-				parent.set_left(addedNode)
-			else:
-				while(node.get_height() > A.get_root().get_height()):
-					node = node.get_right()
-				parent = node.get_parent()
-				addedNode.set_parent(parent)
-				addedNode.set_right(A.get_root())
-				A.get_root().set_parent(addedNode)
-				addedNode.set_left(node)
-				node.set_parent(addedNode)
-				parent.set_right(addedNode)
+		if(A.get_root().get_key() < B.get_root().get_key()):
+			while(node.get_height() > A.get_height()):
+				node = node.get_left()
+			parent = node.get_parent()
+			addedNode.set_parent(parent)
+			addedNode.set_left(A.get_root())
+			A.get_root().set_parent(addedNode)
+			addedNode.set_right(node)
+			node.set_parent(addedNode)
+			parent.set_left(addedNode)
+		else:
+			while(node.get_height() > A.get_root().get_height()):
+				node = node.get_right()
+			parent = node.get_parent()
+			addedNode.set_parent(parent)
+			addedNode.set_right(A.get_root())
+			A.get_root().set_parent(addedNode)
+			addedNode.set_left(node)
+			node.set_parent(addedNode)
+			parent.set_right(addedNode)
 
 
 		bf_addedNode = self.getBF(addedNode)
@@ -1104,4 +1106,4 @@ class AVLTree(object):
 
 
 
-		return ret
+		return bf_addedNode
